@@ -61,7 +61,7 @@ class KinectTracker {
       }
     }
     // As long as we found something
-    if (count != 0) {
+    if (count > 50) {
       loc = new PVector(sumX/count, sumY/count);
     }
 

@@ -1,0 +1,10 @@
+{
+  "/onClickShowKinect": {"arrayValue": [1]},
+  "/onClickShowMapping": {"arrayValue": [1]},
+  "/contraste": {
+    "min": 0,
+    "max": 1000,
+    "value": 780
+  },
+  "/onClickShowCursor": {"arrayValue": [1]}
+}

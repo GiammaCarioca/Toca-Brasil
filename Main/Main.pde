@@ -1,6 +1,7 @@
 import org.openkinect.freenect.*;
 import org.openkinect.processing.*;
 import deadpixel.keystone.*;
+import processing.sound.*;
 
 Keystone ks;
 CornerPinSurface surface;
@@ -30,6 +31,8 @@ Boolean showUI = false;
 
 PImage mask;
 PImage contorno;
+
+PVector cursor = new PVector();
 
 void setup() {
   size(1024, 768, P3D);
@@ -70,11 +73,22 @@ void setup() {
   cp5.setAutoDraw(false);
   //cp5.loadProperties(("default.json"));
   
-  norte = new Regiao("norte.png");
-  nordeste = new Regiao("nordeste.png");
-  sudeste = new Regiao("sudeste.png");
-  centroeste = new Regiao("centroeste.png");
-  sul = new Regiao("sul.png");
+  norte = new Regiao(this, "norte.png");
+  nordeste = new Regiao(this, "nordeste.png");
+  sudeste = new Regiao(this, "sudeste.png");
+  centroeste = new Regiao(this, "centroeste.png");
+  sul = new Regiao(this, "sul.png");
+  
+  centroeste.addSound("musicas/centroeste/sertanejo.mp3");
+  centroeste.addSound("musicas/centroeste/siriri.mp3");
+  nordeste.addSound("musicas/nordeste/forro.mp3");
+  nordeste.addSound("musicas/nordeste/frevo.mp3");
+  norte.addSound("musicas/norte/carimbo.mp3");
+  norte.addSound("musicas/norte/retumbao.mp3");
+  sudeste.addSound("musicas/sudeste/funk.mp3");
+  sudeste.addSound("musicas/sudeste/samba.mp3");
+  sul.addSound("musicas/sul/chamarrita.mp3");
+  sul.addSound("musicas/sul/fandango.mp3");
   
   regioes[0] = norte;
   regioes[1] = nordeste;
@@ -100,13 +114,17 @@ void draw() {
 
   // Let's draw the "lerped" location
   PVector v2 = tracker.getLerpedPos();
-  PVector v3 = new PVector(v2.x, v2.y);
-  if(v3.x>1 && v3.y>1){
-    v3.mult((float)width/(float)kinect.width);
+  cursor = new PVector(v2.x, v2.y);
+  if(cursor.x>1 && cursor.y>1){
+    cursor.mult((float)width/(float)kinect.width);
   }
   
+  //para debugar
+  cursor.x = mouseX;
+  cursor.y = mouseY;
+  
   for (int i = 0; i < regioes.length; i++) {
-    regioes[i].tocou(v3.x, v3.y);
+    regioes[i].tocou(cursor.x, cursor.y);
     if(regioes[i].pressed){
       //offscreen.image(regioes[i].background, 0, 0);
     }
@@ -123,7 +141,7 @@ void draw() {
     offscreen.fill(100, 250, 50, 200);
     offscreen.ellipse(v2.x, v2.y, 20, 20);
     offscreen.fill(250, 100, 50, 200);
-    offscreen.ellipse(v3.x, v3.y, 20, 20);
+    offscreen.ellipse(cursor.x, cursor.y, 20, 20);
   }
   
   offscreen.endDraw();
@@ -174,8 +192,8 @@ void onClickShowMapping(float[] a) {
 
 
 void mouseDragged(){
-  particles.attract.x = mouseX;
-  particles.attract.y = mouseY;
+  particles.attract.x = cursor.x;
+  particles.attract.y = cursor.y;
 }
 
 void mouseReleased(){

@@ -4,11 +4,26 @@ class Regiao {
   PImage background;
   boolean pressed = false;
   
-  Regiao(String url) {
+  int soundAdded = 0;
+  int currentSound = 0;
+  SoundFile[] sounds = new SoundFile[2];
+  
+  Main main;
+  
+  Regiao(Main main, String url) {
+    this.main = main;
     img = loadImage(url);
     background = loadImage("background.jpg");
     background.mask(img);
-
+  }
+  
+  void addSound(String path){
+    if(soundAdded>=sounds.length){
+      println("Max sound already added");
+    }else{
+      sounds[soundAdded] = new SoundFile(main, path);
+      soundAdded++;
+   }
   }
   
   boolean jaTocou = false;
@@ -31,9 +46,15 @@ class Regiao {
   
   void onPress(){
     pressed = true;
+    sounds[currentSound].play();
   }
   
   void onRelease(){
     pressed = false;
+    sounds[currentSound].stop();
+    currentSound++;
+    if(currentSound>=sounds.length){
+      currentSound = 0;
+    }
   }
 }

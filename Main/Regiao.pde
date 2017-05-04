@@ -14,7 +14,7 @@ class Regiao {
   boolean jaTocou = false;
   boolean tocou(float x, float y) {
    float grey = red(img.get((int)x, (int)y));
-   if(grey<125){
+   if(grey>125){
      if(jaTocou==false){
        jaTocou = true;
        onPress();

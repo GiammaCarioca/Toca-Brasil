@@ -1,10 +1,10 @@
 {
-  "/onClickShowKinect": {"arrayValue": [1]},
-  "/onClickShowMapping": {"arrayValue": [1]},
+  "/onClickShowKinect": {"arrayValue": [0]},
+  "/onClickShowMapping": {"arrayValue": [0]},
   "/contraste": {
     "min": 0,
     "max": 1000,
     "value": 780
   },
-  "/onClickShowCursor": {"arrayValue": [1]}
+  "/onClickShowCursor": {"arrayValue": [0]}
 }

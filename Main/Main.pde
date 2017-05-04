@@ -22,12 +22,19 @@ Regiao sul;
 
 Regiao[] regioes = new Regiao[5];
 
+Particles particles = new Particles();
+
 Boolean showKinect = false;
 Boolean showCursor = false;
 Boolean showUI = false;
 
+PImage mask;
+PImage contorno;
+
 void setup() {
   size(1024, 768, P3D);
+  
+  particles.setup();
 
   ks = new Keystone(this);
   surface = ks.createCornerPinSurface(width, height, 20);
@@ -74,18 +81,19 @@ void setup() {
   regioes[2] = sudeste;
   regioes[3] = centroeste;
   regioes[4] = sul;
+  
+  mask = loadImage("mask.png");
+  contorno = loadImage("contorno.png");
 }
 
 void draw() {
-  background(255);
-  
+  background(0);
   
   PVector surfaceMouse = surface.getTransformedMouse();
   
-  
   // Draw the scene, offscreen
   offscreen.beginDraw();
-  offscreen.background(255);
+  offscreen.background(0);
   
   // Run the tracking analysis
   tracker.track();
@@ -100,17 +108,15 @@ void draw() {
   for (int i = 0; i < regioes.length; i++) {
     regioes[i].tocou(v3.x, v3.y);
     if(regioes[i].pressed){
-      offscreen.image(regioes[i].background, 0, 0);
+      //offscreen.image(regioes[i].background, 0, 0);
     }
   }
+  particles.draw(offscreen);
   
-  if(showKinect) {
-    tracker.display();
-
-    fill(0);
-    text("threshold: " + tracker.getThreshold() + "    " +  "framerate: " + int(frameRate) + "    " + 
-      "UP increase threshold, DOWN decrease threshold", 10, 500);
-  }
+  offscreen.hint(DISABLE_DEPTH_TEST);
+  offscreen.image(mask, 0, 0);
+  offscreen.image(contorno, 0, 0);
+  offscreen.hint(ENABLE_DEPTH_TEST);
   
   if(showCursor){
     offscreen.noStroke();
@@ -121,6 +127,16 @@ void draw() {
   }
   
   offscreen.endDraw();
+  
+  
+  if(showKinect) {
+    tracker.display();
+
+    fill(0);
+    text("threshold: " + tracker.getThreshold() + "    " +  "framerate: " + int(frameRate) + "    " + 
+      "UP increase threshold, DOWN decrease threshold", 10, 500);
+  }
+  
   surface.render(offscreen);
   if(showUI) cp5.draw();
 }
@@ -153,4 +169,16 @@ void onClickShowCursor(float[] a) {
 
 void onClickShowMapping(float[] a) {
   ks.toggleCalibration();
+}
+
+
+
+void mouseDragged(){
+  particles.attract.x = mouseX;
+  particles.attract.y = mouseY;
+}
+
+void mouseReleased(){
+  particles.attract.x = -1;
+  particles.attract.y = -1;
 }

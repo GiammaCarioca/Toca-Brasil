@@ -3,6 +3,7 @@ class Regiao {
   PImage img;
   PImage background;
   boolean pressed = false;
+  color col;
   
   int soundAdded = 0;
   int currentSound = 0;
@@ -10,8 +11,10 @@ class Regiao {
   
   Main main;
   
-  Regiao(Main main, String url) {
+  Regiao(Main main, String url, color col) {
     this.main = main;
+    this.col = col;
+    println(col);
     img = loadImage(url);
     background = loadImage("background.jpg");
     background.mask(img);
@@ -24,6 +27,10 @@ class Regiao {
       sounds[soundAdded] = new SoundFile(main, path);
       soundAdded++;
    }
+  }
+  
+  boolean tocouParticle(float x, float y) {
+   return red(img.get((int)x, (int)y))>125;
   }
   
   boolean jaTocou = false;

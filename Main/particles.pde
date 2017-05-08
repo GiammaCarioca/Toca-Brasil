@@ -20,7 +20,7 @@ class Particles {
         float dist = dist(movers[i].location.x,movers[i].location.y,movers[j].location.x,movers[j].location.y);
         
         if(i!=j&&dist<=100) {
-          canvas.stroke(255,50);
+          canvas.stroke(movers[i].col,50);
           canvas.line(movers[i].location.x,movers[i].location.y, -1,movers[j].location.x,movers[j].location.y, -1);
         }
       }
@@ -36,6 +36,7 @@ class Mover {
   int id;
   PVector dir = new PVector();
   Boolean changeDir = false;
+  color col = color(255);
 
   Mover() {
     sz = 5;
@@ -76,7 +77,7 @@ class Mover {
   }
 
   void display(PGraphics canvas) {
-    canvas.stroke(255);
+    canvas.stroke(col);
     canvas.point(location.x, location.y, -1);
     //ellipse(location.x, location.y, sz, sz);
   }

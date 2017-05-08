@@ -73,11 +73,11 @@ void setup() {
   cp5.setAutoDraw(false);
   //cp5.loadProperties(("default.json"));
   
-  norte = new Regiao(this, "norte.png");
-  nordeste = new Regiao(this, "nordeste.png");
-  sudeste = new Regiao(this, "sudeste.png");
-  centroeste = new Regiao(this, "centroeste.png");
-  sul = new Regiao(this, "sul.png");
+  norte = new Regiao(this, "norte.png", color(255, 0, 0));
+  nordeste = new Regiao(this, "nordeste.png", color(255, 255, 0));
+  sudeste = new Regiao(this, "sudeste.png", color(0, 255, 0));
+  centroeste = new Regiao(this, "centroeste.png", color(0, 0, 255));
+  sul = new Regiao(this, "sul.png", color(255, 0, 255));
   
   centroeste.addSound("musicas/centroeste/sertanejo.mp3");
   centroeste.addSound("musicas/centroeste/siriri.mp3");
@@ -127,6 +127,19 @@ void draw() {
     regioes[i].tocou(cursor.x, cursor.y);
     if(regioes[i].pressed){
       //offscreen.image(regioes[i].background, 0, 0);
+    }
+  }
+  for(int j=0; j < particles.movers.length; j++){
+    boolean tocou = false;
+    particles.movers[j].col = color(255);
+    for (int i = 0; i < regioes.length && !tocou; i++) {
+      if(regioes[i].pressed){
+        tocou = regioes[i].tocouParticle(particles.movers[j].location.x, particles.movers[j].location.y);
+        if(tocou){
+          println(regioes[i].col);
+          particles.movers[j].col = regioes[i].col;
+        }
+      }
     }
   }
   particles.draw(offscreen);

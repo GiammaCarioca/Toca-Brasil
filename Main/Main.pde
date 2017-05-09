@@ -28,6 +28,8 @@ Particles particles = new Particles();
 Boolean showKinect = false;
 Boolean showCursor = false;
 Boolean showUI = false;
+PVector cursorTranslate = new PVector(0, 0);
+PVector cursorScale = new PVector(1, 1);
 
 PImage mask;
 PImage contorno;
@@ -50,28 +52,31 @@ void setup() {
   
   cp5 = new ControlP5(this);
   
-  cp5.addCheckBox("onClickShowKinect")
-                .setPosition(100, 200)
-                .setSize(40, 40)
-                .addItem("Show Kinect", 0);
-  
-  
-  cp5.addCheckBox("onClickShowCursor")
+  cp5.addToggle("ShowKinect")
                 .setPosition(100, 250)
-                .setSize(40, 40)
-                .addItem("Show Cursor", 0);
+                .setSize(40, 40);
   
   
-  cp5.addCheckBox("onClickShowMapping")
-                .setPosition(100, 300)
-                .setSize(40, 40)
-                .addItem("Show Mapping", 0);
+  cp5.addToggle("ShowCursor")
+                .setPosition(180, 250)
+                .setSize(40, 40);
+  
+  
+  cp5.addToggle("ShowMapping")
+                .setPosition(260, 250)
+                .setSize(40, 40);
   
   // name, minValue, maxValue, defaultValue, x, y, width, height
   cp5.addSlider("contraste", 0, 1000, 780, 100, 350, 300, 14);
+  
+  // name, minValue, maxValue, defaultValue, x, y, width, height
+  cp5.addSlider("cursorX", -300, 300, 0, 100, 400, 300, 14);
+  cp5.addSlider("cursorY", -300, 300, 0, 100, 420, 300, 14);
+  cp5.addSlider("cursorScaleX", 0, 2, 1, 100, 440, 300, 14);
+  cp5.addSlider("cursorScaleY", 0, 2, 1, 100, 460, 300, 14);
                 
   cp5.setAutoDraw(false);
-  //cp5.loadProperties(("default.json"));
+  cp5.loadProperties("default.json");
   
   norte = new Regiao(this, "norte.png", color(255, 0, 0));
   nordeste = new Regiao(this, "nordeste.png", color(255, 255, 0));
@@ -103,7 +108,7 @@ void setup() {
 void draw() {
   background(0);
   
-  PVector surfaceMouse = surface.getTransformedMouse();
+  //PVector surfaceMouse = surface.getTransformedMouse();
   
   // Draw the scene, offscreen
   offscreen.beginDraw();
@@ -120,11 +125,18 @@ void draw() {
   }
   
   //para debugar
-  cursor.x = mouseX;
-  cursor.y = mouseY;
+  //cursor.x = mouseX;
+  //cursor.y = mouseY;
+  
+  cursor.x *= cursorScale.x;
+  cursor.y *= cursorScale.y;
+  
+  cursor.x += cursorTranslate.x;
+  cursor.y += cursorTranslate.y;
   
   for (int i = 0; i < regioes.length; i++) {
     regioes[i].tocou(cursor.x, cursor.y);
+    regioes[i].update();
     if(regioes[i].pressed){
       //offscreen.image(regioes[i].background, 0, 0);
     }
@@ -132,11 +144,12 @@ void draw() {
   for(int j=0; j < particles.movers.length; j++){
     boolean tocou = false;
     particles.movers[j].col = color(255);
+    particles.movers[j].sz = 5;
     for (int i = 0; i < regioes.length && !tocou; i++) {
       if(regioes[i].pressed){
         tocou = regioes[i].tocouParticle(particles.movers[j].location.x, particles.movers[j].location.y);
         if(tocou){
-          println(regioes[i].col);
+          particles.movers[j].sz = regioes[i].amplitude * 50 + 5;
           particles.movers[j].col = regioes[i].col;
         }
       }
@@ -151,24 +164,32 @@ void draw() {
   
   if(showCursor){
     offscreen.noStroke();
-    offscreen.fill(100, 250, 50, 200);
-    offscreen.ellipse(v2.x, v2.y, 20, 20);
     offscreen.fill(250, 100, 50, 200);
     offscreen.ellipse(cursor.x, cursor.y, 20, 20);
   }
   
   offscreen.endDraw();
   
+  surface.render(offscreen);
+  
   
   if(showKinect) {
-    tracker.display();
-
+    pushMatrix();
+      scale(0.5, 0.5);
+      tracker.display();
+      
+      if(showCursor){
+        noStroke();
+        fill(100, 250, 50, 200);
+        ellipse(v2.x, v2.y, 20, 20);
+      }
+    
+    popMatrix();
     fill(0);
     text("threshold: " + tracker.getThreshold() + "    " +  "framerate: " + int(frameRate) + "    " + 
       "UP increase threshold, DOWN decrease threshold", 10, 500);
   }
   
-  surface.render(offscreen);
   if(showUI) cp5.draw();
 }
 
@@ -189,16 +210,28 @@ void keyPressed() {
 public void contraste(int theValue) {
   tracker.setThreshold(theValue);
 }
-
-void onClickShowKinect(float[] a) {
-  showKinect = a[0] == 1.0;
+public void cursorX(int theValue) {
+  cursorTranslate.x = theValue;
+}
+public void cursorY(int theValue) {
+  cursorTranslate.y = theValue;
+}
+public void cursorScaleX(float theValue) {
+  cursorScale.x = theValue;
+}
+public void cursorScaleY(float theValue) {
+  cursorScale.y = theValue;
 }
 
-void onClickShowCursor(float[] a) {
-  showCursor = a[0] == 1.0;
+void ShowKinect(boolean theFlag) {
+  showKinect = theFlag;
 }
 
-void onClickShowMapping(float[] a) {
+void ShowCursor(boolean theFlag) {
+  showCursor = theFlag;
+}
+
+void ShowMapping(boolean theFlag) {
   ks.toggleCalibration();
 }
 

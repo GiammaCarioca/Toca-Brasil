@@ -1,10 +1,30 @@
 {
-  "/onClickShowKinect": {"arrayValue": [0]},
-  "/onClickShowMapping": {"arrayValue": [0]},
+  "/cursorX": {
+    "min": -300,
+    "max": 300,
+    "value": -139.99998474121094
+  },
+  "/cursorScaleY": {
+    "min": 0,
+    "max": 2,
+    "value": 0.6266666650772095
+  },
+  "/cursorY": {
+    "min": -300,
+    "max": 300,
+    "value": 146
+  },
+  "/cursorScaleX": {
+    "min": 0,
+    "max": 2,
+    "value": 1.4800000190734863
+  },
+  "/ShowMapping": {"value": 0},
+  "/ShowKinect": {"value": 1},
   "/contraste": {
     "min": 0,
     "max": 1000,
     "value": 780
   },
-  "/onClickShowCursor": {"arrayValue": [0]}
+  "/ShowCursor": {"value": 1}
 }

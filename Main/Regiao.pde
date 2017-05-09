@@ -7,26 +7,36 @@ class Regiao {
   
   int soundAdded = 0;
   int currentSound = 0;
-  SoundFile[] sounds = new SoundFile[2];
+  //SoundFile[] sounds = new SoundFile[2];
+  //Amplitude amp;
+  float amplitude;
   
   Main main;
   
   Regiao(Main main, String url, color col) {
     this.main = main;
     this.col = col;
-    println(col);
     img = loadImage(url);
     background = loadImage("background.jpg");
     background.mask(img);
+    //amp = new Amplitude(main);
+  }
+  
+  void update(){
+    //if(pressed) amplitude = amp.analyze();
   }
   
   void addSound(String path){
+    /*
     if(soundAdded>=sounds.length){
       println("Max sound already added");
     }else{
       sounds[soundAdded] = new SoundFile(main, path);
+      sounds[soundAdded].loop();
+      sounds[soundAdded].amp(0);
       soundAdded++;
    }
+   */
   }
   
   boolean tocouParticle(float x, float y) {
@@ -53,15 +63,18 @@ class Regiao {
   
   void onPress(){
     pressed = true;
-    sounds[currentSound].play();
+    //sounds[currentSound].amp(1);
+    //amp.input(sounds[currentSound]);
   }
   
   void onRelease(){
     pressed = false;
-    sounds[currentSound].stop();
+    /*
+    sounds[currentSound].amp(0);
     currentSound++;
     if(currentSound>=sounds.length){
       currentSound = 0;
     }
+    */
   }
 }

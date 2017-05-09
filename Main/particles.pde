@@ -78,8 +78,12 @@ class Mover {
 
   void display(PGraphics canvas) {
     canvas.stroke(col);
-    canvas.point(location.x, location.y, -1);
-    //ellipse(location.x, location.y, sz, sz);
+    canvas.fill(col);
+    //canvas.point(location.x, location.y, -1);
+    canvas.pushMatrix();
+    canvas.translate(0, 0, -1);
+    canvas.ellipse(location.x, location.y, sz, sz);
+    canvas.popMatrix();
   }
 
   void checkEdges() {

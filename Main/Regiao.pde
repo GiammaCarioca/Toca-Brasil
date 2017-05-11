@@ -27,7 +27,6 @@ class Regiao {
       amplitude = sounds[currentSound].left.level();
       maxAmplitude = max(maxAmplitude, amplitude);
       amplitude /= maxAmplitude;
-      println(amplitude);
     }
   }
   

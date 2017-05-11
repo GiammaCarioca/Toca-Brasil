@@ -142,6 +142,14 @@ void draw() {
   cursor.x += cursorTranslate.x;
   cursor.y += cursorTranslate.y;
   
+  if(tracker.intensity>0.5){
+    particles.attract.x = cursor.x;
+    particles.attract.y = cursor.y; 
+  }else{
+    particles.attract.x = -1;
+    particles.attract.y = -1;
+  }
+  
   for (int i = 0; i < regioes.length; i++) {
     regioes[i].tocou(cursor.x, cursor.y);
     regioes[i].update();

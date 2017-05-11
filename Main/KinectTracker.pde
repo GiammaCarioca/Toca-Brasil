@@ -73,6 +73,8 @@ class KinectTracker {
       maxZ = max(sumZ/count, maxZ);
       intensity = map(sumZ/count, minZ, maxZ, 1, 0);
     }
+    if(maxZ>minZ+10) maxZ-=1;
+    if(minZ<maxZ-10) minZ+=1;
 
     // Interpolating the location, doing it arbitrarily for now
     lerpedLoc.x = PApplet.lerp(lerpedLoc.x, loc.x, 0.3f);

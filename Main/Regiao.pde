@@ -3,12 +3,12 @@ class Regiao {
   PImage img;
   PImage background;
   boolean pressed = false;
+  boolean toggle = false;
   color col;
   
   int soundAdded = 0;
   int currentSound = 0;
-  //SoundFile[] sounds = new SoundFile[2];
-  //Amplitude amp;
+  AudioPlayer[] sounds = new AudioPlayer[2];
   float amplitude;
   
   Main main;
@@ -19,24 +19,21 @@ class Regiao {
     img = loadImage(url);
     background = loadImage("background.jpg");
     background.mask(img);
-    //amp = new Amplitude(main);
   }
   
   void update(){
-    //if(pressed) amplitude = amp.analyze();
+    if(pressed) amplitude = sounds[currentSound].left.level()*5;
   }
   
   void addSound(String path){
-    /*
     if(soundAdded>=sounds.length){
       println("Max sound already added");
     }else{
-      sounds[soundAdded] = new SoundFile(main, path);
+      sounds[soundAdded] = main.minim.loadFile(path);
+      sounds[soundAdded].setGain(-60);
       sounds[soundAdded].loop();
-      sounds[soundAdded].amp(0);
       soundAdded++;
    }
-   */
   }
   
   boolean tocouParticle(float x, float y) {
@@ -63,18 +60,19 @@ class Regiao {
   
   void onPress(){
     pressed = true;
-    //sounds[currentSound].amp(1);
-    //amp.input(sounds[currentSound]);
+    toggle = !toggle;
+    if(toggle){
+      sounds[currentSound].setGain(0);
+    }else{
+      sounds[currentSound].setGain(-60);
+      currentSound++;
+      if(currentSound>=sounds.length){
+        currentSound = 0;
+      }
+    }
   }
   
   void onRelease(){
     pressed = false;
-    /*
-    sounds[currentSound].amp(0);
-    currentSound++;
-    if(currentSound>=sounds.length){
-      currentSound = 0;
-    }
-    */
   }
 }

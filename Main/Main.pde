@@ -1,7 +1,7 @@
 import org.openkinect.freenect.*;
 import org.openkinect.processing.*;
 import deadpixel.keystone.*;
-import processing.sound.*;
+import ddf.minim.*;
 
 Keystone ks;
 CornerPinSurface surface;
@@ -36,8 +36,12 @@ PImage contorno;
 
 PVector cursor = new PVector();
 
+Minim minim;
+
 void setup() {
   size(1024, 768, P3D);
+  
+  minim = new Minim(this);
   
   particles.setup();
 
@@ -137,7 +141,7 @@ void draw() {
   for (int i = 0; i < regioes.length; i++) {
     regioes[i].tocou(cursor.x, cursor.y);
     regioes[i].update();
-    if(regioes[i].pressed){
+    if(regioes[i].toggle){
       //offscreen.image(regioes[i].background, 0, 0);
     }
   }
@@ -146,7 +150,7 @@ void draw() {
     particles.movers[j].col = color(255);
     particles.movers[j].sz = 5;
     for (int i = 0; i < regioes.length && !tocou; i++) {
-      if(regioes[i].pressed){
+      if(regioes[i].toggle){
         tocou = regioes[i].tocouParticle(particles.movers[j].location.x, particles.movers[j].location.y);
         if(tocou){
           particles.movers[j].sz = regioes[i].amplitude * 50 + 5;

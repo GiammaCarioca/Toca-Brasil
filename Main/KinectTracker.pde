@@ -21,6 +21,10 @@ class KinectTracker {
   
   // What we'll show the user
   PImage display;
+  
+  float minZ = 9999999;
+  float maxZ = 0;
+  float intensity = 0;
    
   KinectTracker() {
     // This is an awkard use of a global variable here
@@ -44,6 +48,7 @@ class KinectTracker {
     float sumX = 0;
     float sumY = 0;
     float count = 0;
+    int sumZ = 0;
 
     for (int x = 0; x < kinect.width; x++) {
       for (int y = 0; y < kinect.height; y++) {
@@ -56,6 +61,7 @@ class KinectTracker {
         if (rawDepth < threshold) {
           sumX += x;
           sumY += y;
+          sumZ += rawDepth;
           count++;
         }
       }
@@ -63,6 +69,9 @@ class KinectTracker {
     // As long as we found something
     if (count > 50) {
       loc = new PVector(sumX/count, sumY/count);
+      minZ = min(sumZ/count, minZ);
+      maxZ = max(sumZ/count, maxZ);
+      intensity = map(sumZ/count, minZ, maxZ, 1, 0);
     }
 
     // Interpolating the location, doing it arbitrarily for now

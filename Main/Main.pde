@@ -38,6 +38,8 @@ PVector cursor = new PVector();
 
 Minim minim;
 
+ExplosionSystem explosions;
+
 void setup() {
   size(1024, 768, P3D);
   
@@ -82,11 +84,11 @@ void setup() {
   cp5.setAutoDraw(false);
   cp5.loadProperties("default.json");
   
-  norte = new Regiao(this, "norte.png", color(255, 0, 0));
-  nordeste = new Regiao(this, "nordeste.png", color(255, 255, 0));
-  sudeste = new Regiao(this, "sudeste.png", color(0, 255, 0));
-  centroeste = new Regiao(this, "centroeste.png", color(0, 0, 255));
-  sul = new Regiao(this, "sul.png", color(255, 0, 255));
+  norte = new Regiao(this, "norte.png", color(0, 146, 191));
+  nordeste = new Regiao(this, "nordeste.png", color(13, 181, 113));
+  sudeste = new Regiao(this, "sudeste.png", color(190, 219, 57));
+  centroeste = new Regiao(this, "centroeste.png", color(255, 225, 26));
+  sul = new Regiao(this, "sul.png", color(253, 116, 0));
   
   centroeste.addSound("musicas/centroeste/sertanejo.mp3");
   centroeste.addSound("musicas/centroeste/siriri.mp3");
@@ -107,6 +109,8 @@ void setup() {
   
   mask = loadImage("mask.png");
   contorno = loadImage("contorno.png");
+  
+  explosions = new ExplosionSystem(new PVector());
 }
 
 void draw() {
@@ -141,9 +145,6 @@ void draw() {
   for (int i = 0; i < regioes.length; i++) {
     regioes[i].tocou(cursor.x, cursor.y);
     regioes[i].update();
-    if(regioes[i].toggle){
-      //offscreen.image(regioes[i].background, 0, 0);
-    }
   }
   for(int j=0; j < particles.movers.length; j++){
     boolean tocou = false;
@@ -153,8 +154,12 @@ void draw() {
       if(regioes[i].toggle){
         tocou = regioes[i].tocouParticle(particles.movers[j].location.x, particles.movers[j].location.y);
         if(tocou){
-          particles.movers[j].sz = regioes[i].amplitude * 50 + 5;
+          particles.movers[j].sz = (regioes[i].amplitude * tracker.intensity) * 50 + 5;
           particles.movers[j].col = regioes[i].col;
+          if(regioes[i].amplitude>0.8 && random(1.0)>0.5){
+            explosions.origin.set(particles.movers[j].location.x,particles.movers[j].location.y,0);
+            explosions.addParticle(regioes[i].col);
+          }
         }
       }
     }
@@ -165,6 +170,9 @@ void draw() {
   offscreen.image(mask, 0, 0);
   offscreen.image(contorno, 0, 0);
   offscreen.hint(ENABLE_DEPTH_TEST);
+  
+  
+  explosions.run(offscreen);
   
   if(showCursor){
     offscreen.noStroke();

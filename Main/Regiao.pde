@@ -10,6 +10,7 @@ class Regiao {
   int currentSound = 0;
   AudioPlayer[] sounds = new AudioPlayer[2];
   float amplitude;
+  float maxAmplitude = 0;
   
   Main main;
   
@@ -22,7 +23,12 @@ class Regiao {
   }
   
   void update(){
-    if(pressed) amplitude = sounds[currentSound].left.level()*5;
+    if(toggle) {
+      amplitude = sounds[currentSound].left.level();
+      maxAmplitude = max(maxAmplitude, amplitude);
+      amplitude /= maxAmplitude;
+      println(amplitude);
+    }
   }
   
   void addSound(String path){
@@ -64,6 +70,7 @@ class Regiao {
     if(toggle){
       sounds[currentSound].setGain(0);
     }else{
+      maxAmplitude = 0;
       sounds[currentSound].setGain(-60);
       currentSound++;
       if(currentSound>=sounds.length){

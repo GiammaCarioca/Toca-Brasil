@@ -37,6 +37,7 @@ class Mover {
   PVector dir = new PVector();
   Boolean changeDir = false;
   color col = color(255);
+  float colR = random(-60, 60);
 
   Mover() {
     sz = 5;
@@ -77,8 +78,7 @@ class Mover {
   }
 
   void display(PGraphics canvas) {
-    canvas.stroke(col);
-    canvas.fill(col);
+    canvas.fill(red(col)+colR, green(col)+colR, blue(col)+colR);
     //canvas.point(location.x, location.y, -1);
     canvas.pushMatrix();
     canvas.translate(0, 0, -1);

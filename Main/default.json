@@ -19,12 +19,12 @@
     "max": 2,
     "value": 1.4800000190734863
   },
-  "/ShowMapping": {"value": 0},
+  "/ShowMapping": {"value": 1},
   "/ShowKinect": {"value": 1},
   "/contraste": {
     "min": 0,
     "max": 1000,
-    "value": 780
+    "value": 696.6666870117188
   },
   "/ShowCursor": {"value": 1}
 }

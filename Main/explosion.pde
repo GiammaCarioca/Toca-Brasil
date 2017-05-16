@@ -7,8 +7,8 @@ class Explosion {
 
   Explosion(PVector l, color col) {
     this.col = col;
-    acceleration = new PVector(0,0.05);
-    velocity = new PVector(random(-2,2),random(-2,2));
+    acceleration = new PVector(0,0);
+    velocity = new PVector(random(-1,1),random(-1,1));
     location = l.get();
     lifespan = random(20,40);
   }

@@ -25,6 +25,9 @@ Regiao[] regioes = new Regiao[5];
 
 Particles particles = new Particles();
 
+AudioPlayer screensaverSound;
+int millisToStartScreensaver = 0;
+
 Boolean showKinect = false;
 Boolean showCursor = false;
 Boolean showUI = false;
@@ -84,11 +87,11 @@ void setup() {
   cp5.setAutoDraw(false);
   cp5.loadProperties("default.json");
   
-  norte = new Regiao(this, "norte.png", color(0, 146, 191));
-  nordeste = new Regiao(this, "nordeste.png", color(13, 181, 113));
-  sudeste = new Regiao(this, "sudeste.png", color(190, 219, 57));
-  centroeste = new Regiao(this, "centroeste.png", color(255, 225, 26));
-  sul = new Regiao(this, "sul.png", color(253, 116, 0));
+  norte = new Regiao(this, "norte.png", color(219, 25, 6));
+  nordeste = new Regiao(this, "nordeste.png", color(255, 120, 7));
+  sudeste = new Regiao(this, "sudeste.png", color(210, 30, 87));
+  centroeste = new Regiao(this, "centroeste.png", color(255, 225, 0));
+  sul = new Regiao(this, "sul.png", color(245, 175, 10));
   
   centroeste.addSound("musicas/centroeste/sertanejo.mp3");
   centroeste.addSound("musicas/centroeste/siriri.mp3");
@@ -106,6 +109,10 @@ void setup() {
   regioes[2] = sudeste;
   regioes[3] = centroeste;
   regioes[4] = sul;
+  
+  screensaverSound = minim.loadFile("musicas/base.mp3");
+  screensaverSound.setGain(0);
+  screensaverSound.loop();
   
   mask = loadImage("mask.png");
   contorno = loadImage("contorno.png");
@@ -154,6 +161,18 @@ void draw() {
     regioes[i].tocou(cursor.x, cursor.y);
     regioes[i].update();
   }
+  
+  for (int i = 0; i < regioes.length; i++) {
+    if (regioes[i].toggle) {
+      millisToStartScreensaver = millis() + 10 * 1000; // 10 segundos * 1000 milisegundos
+    }
+  }
+  if (millis() > millisToStartScreensaver) {
+    screensaverSound.setGain(0);
+  } else {
+    screensaverSound.setGain(-60);
+  }
+  
   for(int j=0; j < particles.movers.length; j++){
     boolean tocou = false;
     particles.movers[j].col = color(255);

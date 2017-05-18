@@ -14,6 +14,8 @@ PGraphics offscreen;
 
 import controlP5.*;
 ControlP5 cp5;
+Slider2D cropInSlider;
+Slider2D cropOutSlider;
 
 Regiao norte;
 Regiao nordeste;
@@ -44,7 +46,8 @@ Minim minim;
 ExplosionSystem explosions;
 
 void setup() {
-  size(1024, 768, P3D);
+  //size(1024, 768, P3D);
+  fullScreen(P3D);
   
   minim = new Minim(this);
   
@@ -79,10 +82,22 @@ void setup() {
   cp5.addSlider("contraste", 0, 1000, 780, 100, 350, 300, 14);
   
   // name, minValue, maxValue, defaultValue, x, y, width, height
-  cp5.addSlider("cursorX", -300, 300, 0, 100, 400, 300, 14);
-  cp5.addSlider("cursorY", -300, 300, 0, 100, 420, 300, 14);
-  cp5.addSlider("cursorScaleX", 0, 2, 1, 100, 440, 300, 14);
-  cp5.addSlider("cursorScaleY", 0, 2, 1, 100, 460, 300, 14);
+  cp5.addSlider("cursorX", -1000, 1000, 0, 100, 400, 300, 14);
+  cp5.addSlider("cursorY", -1000, 1000, 0, 100, 420, 300, 14);
+  cp5.addSlider("cursorScaleX", 0, 4, 1, 100, 440, 300, 14);
+  cp5.addSlider("cursorScaleY", 0, 4, 1, 100, 460, 300, 14);
+  
+  cropInSlider = cp5.addSlider2D("cropIn")
+         .setPosition(100,520)
+         .setSize(100,100)
+         .setMinMax(0, 0, 640, 480)
+         .setArrayValue(new float[] {0, 0});
+         
+  cropOutSlider = cp5.addSlider2D("cropOut")
+         .setPosition(250,520)
+         .setSize(100,100)
+         .setMinMax(0, 0, 640, 480)
+         .setArrayValue(new float[] {640, 480});
                 
   cp5.setAutoDraw(false);
   cp5.loadProperties("default.json");
@@ -95,14 +110,19 @@ void setup() {
   
   centroeste.addSound("musicas/centroeste/sertanejo.mp3");
   centroeste.addSound("musicas/centroeste/siriri.mp3");
+  centroeste.addSound("musicas/centroeste/catira.mp3");
   nordeste.addSound("musicas/nordeste/forro.mp3");
   nordeste.addSound("musicas/nordeste/frevo.mp3");
+  nordeste.addSound("musicas/nordeste/maracatu.mp3");
   norte.addSound("musicas/norte/carimbo.mp3");
+  norte.addSound("musicas/norte/lundu.mp3");
   norte.addSound("musicas/norte/retumbao.mp3");
   sudeste.addSound("musicas/sudeste/funk.mp3");
+  sudeste.addSound("musicas/sudeste/caterete.mp3");
   sudeste.addSound("musicas/sudeste/samba.mp3");
   sul.addSound("musicas/sul/chamarrita.mp3");
   sul.addSound("musicas/sul/fandango.mp3");
+  sul.addSound("musicas/sul/milonga.mp3");
   
   regioes[0] = norte;
   regioes[1] = nordeste;
@@ -130,10 +150,14 @@ void draw() {
   offscreen.background(0);
   
   // Run the tracking analysis
+  tracker.cropX = (int)cropInSlider.getArrayValue()[0];
+  tracker.cropY = (int)cropInSlider.getArrayValue()[1];
+  tracker.cropWidth = (int)cropOutSlider.getArrayValue()[0];
+  tracker.cropHeight = (int)cropOutSlider.getArrayValue()[1];
   tracker.track();
 
   // Let's draw the "lerped" location
-  PVector v2 = tracker.getLerpedPos();
+  PVector v2 = tracker.getPos();
   cursor = new PVector(v2.x, v2.y);
   if(cursor.x>1 && cursor.y>1){
     cursor.mult((float)width/(float)kinect.width);
@@ -143,18 +167,21 @@ void draw() {
   //cursor.x = mouseX;
   //cursor.y = mouseY;
   
-  cursor.x *= cursorScale.x;
-  cursor.y *= cursorScale.y;
-  
-  cursor.x += cursorTranslate.x;
-  cursor.y += cursorTranslate.y;
-  
-  if(tracker.intensity>0.5){
+  if(tracker.touching){
     particles.attract.x = cursor.x;
     particles.attract.y = cursor.y; 
+  
+    cursor.x *= cursorScale.x;
+    cursor.y *= cursorScale.y;
+    
+    cursor.x += cursorTranslate.x;
+    cursor.y += cursorTranslate.y;
   }else{
     particles.attract.x = -1;
     particles.attract.y = -1;
+  
+    cursor.x = 0;
+    cursor.y = 0;
   }
   
   for (int i = 0; i < regioes.length; i++) {
@@ -182,7 +209,7 @@ void draw() {
         tocou = regioes[i].tocouParticle(particles.movers[j].location.x, particles.movers[j].location.y);
         if(tocou){
           particles.movers[j].sz = (regioes[i].amplitude * tracker.intensity) * 50 + 5;
-          particles.movers[j].col = regioes[i].col;
+          particles.movers[j].col = color(red(regioes[i].col), green(regioes[i].col), blue(regioes[i].col), 0);
           if(regioes[i].amplitude>0.8 && random(1.0)>0.5){
             explosions.origin.set(particles.movers[j].location.x,particles.movers[j].location.y,0);
             explosions.addParticle(regioes[i].col);
@@ -242,6 +269,7 @@ void keyPressed() {
     break;
   case ' ':
     showUI = !showUI;
+    break;
   }
 }
 
@@ -260,6 +288,13 @@ public void cursorScaleX(float theValue) {
 }
 public void cursorScaleY(float theValue) {
   cursorScale.y = theValue;
+}
+
+public void cropIn(float[] theArray) {
+  println(theArray[0]);
+}
+public void cropOut(float[] theArray) {
+  println(theArray[0]);
 }
 
 void ShowKinect(boolean theFlag) {

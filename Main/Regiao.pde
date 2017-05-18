@@ -8,7 +8,7 @@ class Regiao {
   
   int soundAdded = 0;
   int currentSound = 0;
-  AudioPlayer[] sounds = new AudioPlayer[2];
+  ArrayList<AudioPlayer> sounds = new ArrayList<AudioPlayer>();
   float amplitude;
   float maxAmplitude = 0;
   
@@ -24,21 +24,17 @@ class Regiao {
   
   void update(){
     if(toggle) {
-      amplitude = sounds[currentSound].left.level();
+      amplitude = sounds.get(currentSound).left.level();
       maxAmplitude = max(maxAmplitude, amplitude);
       amplitude /= maxAmplitude;
     }
   }
   
   void addSound(String path){
-    if(soundAdded>=sounds.length){
-      println("Max sound already added");
-    }else{
-      sounds[soundAdded] = main.minim.loadFile(path);
-      sounds[soundAdded].setGain(-60);
-      sounds[soundAdded].loop();
-      soundAdded++;
-   }
+    sounds.add(main.minim.loadFile(path));
+    sounds.get(soundAdded).setGain(-60);
+    sounds.get(soundAdded).loop();
+    soundAdded++;
   }
   
   boolean tocouParticle(float x, float y) {
@@ -67,12 +63,12 @@ class Regiao {
     pressed = true;
     toggle = !toggle;
     if(toggle){
-      sounds[currentSound].setGain(0);
+      sounds.get(currentSound).setGain(0);
     }else{
       maxAmplitude = 0;
-      sounds[currentSound].setGain(-60);
+      sounds.get(currentSound).setGain(-60);
       currentSound++;
-      if(currentSound>=sounds.length){
+      if(currentSound>=sounds.size()){
         currentSound = 0;
       }
     }

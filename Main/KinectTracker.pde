@@ -25,6 +25,14 @@ class KinectTracker {
   float minZ = 9999999;
   float maxZ = 0;
   float intensity = 0;
+  
+  int cropX = 0;
+  int cropY = 0;
+  int cropWidth = 640;
+  int cropHeight = 480;
+  
+  Boolean touching = false;
+  
    
   KinectTracker() {
     // This is an awkard use of a global variable here
@@ -50,8 +58,8 @@ class KinectTracker {
     float count = 0;
     int sumZ = 0;
 
-    for (int x = 0; x < kinect.width; x++) {
-      for (int y = 0; y < kinect.height; y++) {
+    for (int x = cropX; x < kinect.width && x < cropWidth; x++) {
+      for (int y = cropY; y < kinect.height && y < cropHeight; y++) {
         
         int offset =  x + y*kinect.width;
         // Grabbing the raw depth
@@ -72,6 +80,11 @@ class KinectTracker {
       minZ = min(sumZ/count, minZ);
       maxZ = max(sumZ/count, maxZ);
       intensity = map(sumZ/count, minZ, maxZ, 1, 0);
+      touching = true;
+    }else{
+      loc = new PVector(0, 0);
+      intensity = 0;
+      touching = false;
     }
     if(maxZ>minZ+10) maxZ-=1;
     if(minZ<maxZ-10) minZ+=1;
@@ -117,6 +130,17 @@ class KinectTracker {
 
     // Draw the image
     image(display, 0, 0);
+    
+    println(cropX);
+    println(cropY);
+    println(cropWidth);
+    println(cropHeight);
+    println("-----");
+    fill(0, 0, 0, 100);
+    rect(0, 0, kinect.width, cropY);//top
+    rect(0, cropY, cropX, cropHeight-cropY);//left
+    rect(0, cropHeight, kinect.width, kinect.height-(cropHeight-cropY)-cropY);//bottom
+    rect(cropWidth, cropY, kinect.width-cropWidth, cropHeight-cropY);//right
   }
 
   int getThreshold() {

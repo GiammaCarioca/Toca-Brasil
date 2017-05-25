@@ -46,8 +46,8 @@ Minim minim;
 ExplosionSystem explosions;
 
 void setup() {
-  //size(1024, 768, P3D);
-  fullScreen(P3D);
+  size(1024, 768, P3D);
+  //fullScreen(P3D);
   
   minim = new Minim(this);
   
@@ -185,17 +185,21 @@ void draw() {
   }
   
   for (int i = 0; i < regioes.length; i++) {
-    regioes[i].tocou(cursor.x, cursor.y);
+    boolean tocou = regioes[i].tocou(cursor.x, cursor.y);
     regioes[i].update();
-  }
-  
-  for (int i = 0; i < regioes.length; i++) {
-    if (regioes[i].toggle) {
-      millisToStartScreensaver = millis() + 10 * 1000; // 10 segundos * 1000 milisegundos
+    
+    if (tocou) {
+      millisToStartScreensaver = millis() + 5 * 1000; // 5 segundos * 1000 milisegundos
     }
   }
+  
   if (millis() > millisToStartScreensaver) {
     screensaverSound.setGain(0);
+    for (int i = 0; i < regioes.length; i++) {
+      if (regioes[i].toggle) {
+        regioes[i].onPress();
+      }
+    }
   } else {
     screensaverSound.setGain(-60);
   }
